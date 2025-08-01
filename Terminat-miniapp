@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Terminat Protect</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+      body {
+        background-color: var(--tg-theme-bg-color);
+        color: var(--tg-theme-text-color);
+        font-family: sans-serif;
+        text-align: center;
+        padding: 30px;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        background: #2a9d8f;
+        color: white;
+        border-radius: 10px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Bienvenue sur Terminat Protect ⚡</h1>
+    <p>Gérez vos signaux de trading directement via Telegram.</p>
+    <button onclick="Telegram.WebApp.close()">Fermer l'app</button>
+  </body>
+</html>
