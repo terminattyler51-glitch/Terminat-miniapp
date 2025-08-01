@@ -1,47 +1,93 @@
-<!DOCTYPE html><html lang="fr">
+<!DOCTYPE html>
+<html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Terminat Protect - Signaux Deriv</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
+    :root {
+      --primary-color: #0088cc;
+      --secondary-color: #f1f1f1;
+      --text-color: #333;
+      --card-bg: #fff;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f9f9f9;
       margin: 0;
-      padding: 20px;
+      padding: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background-color: var(--secondary-color);
+      color: var(--text-color);
     }
-    h1, h2 {
-      text-align: center;
-      color: #333;
-    }
+
     .container {
-      max-width: 600px;
+      max-width: 650px;
       margin: auto;
+      padding: 24px;
     }
+
+    h1 {
+      text-align: center;
+      color: var(--primary-color);
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 22px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
     .button {
       display: block;
       width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      background-color: #0088cc;
+      padding: 14px;
+      margin: 10px 0;
+      background-color: var(--primary-color);
       color: white;
       border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    .button:hover {
-      background-color: #0074aa;
-    }
-    .back {
-      background-color: #bbb;
-    }
-    .signal-box {
-      background: #fff;
       border-radius: 10px;
-      padding: 16px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #006fa3;
+    }
+
+    .button.back {
+      background-color: #999;
+    }
+
+    .button.back:hover {
+      background-color: #777;
+    }
+
+    .signal-box {
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--shadow);
       margin-top: 20px;
+    }
+
+    @media screen and (max-width: 500px) {
+      .container {
+        padding: 16px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
     }
   </style>
 </head>
@@ -51,8 +97,13 @@
     <div id="asset-list"></div>
     <div id="signal-box" class="signal-box" style="display:none;"></div>
     <button class="button back" id="back-btn" style="display:none;">⬅️ Retour</button>
-  </div>  <script>
-    const apiToken = "Wb2FadXfUtQGotA";
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand(); // étend l'app dans Telegram
+
+    const apiToken = "Wb2FadXfUtQGotA"; // Ton token Deriv
     const appId = 1089;
     const ws = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${appId}`);
 
@@ -68,29 +119,43 @@
 
     ws.onmessage = (msg) => {
       const data = JSON.parse(msg.data);
-
       if (data.active_symbols) {
         activeSymbols = data.active_symbols;
-        showAssetList();
+        afficherListeActifs();
       }
     };
 
-    function showAssetList() {
+    function afficherListeActifs() {
       assetListDiv.innerHTML = "<h2>Choisissez un actif</h2>";
       activeSymbols.forEach(symbol => {
         const btn = document.createElement("button");
         btn.className = "button";
         btn.textContent = `${symbol.display_name}`;
-        btn.onclick = () => showSignal(symbol.symbol, symbol.display_name);
+        btn.onclick = () => afficherSignal(symbol.symbol, symbol.display_name);
         assetListDiv.appendChild(btn);
       });
     }
 
-    function showSignal(symbol, name) {
+    function afficherSignal(symbol, name) {
       assetListDiv.style.display = "none";
       backBtn.style.display = "block";
       signalBox.style.display = "block";
-      signalBox.innerHTML = `<h2>${name}</h2><p>📊 Signal : <strong>Achat</strong><br>📍 Tendance : Stable<br>⏱️ Mis à jour maintenant</p>`;
+      signalBox.innerHTML = `
+        <h2>${name}</h2>
+        <p>
+          📊 <strong>Signal :</strong> Achat<br>
+          📍 <strong>Tendance :</strong> Stable<br>
+          ⏱️ <strong>Mis à jour :</strong> Maintenant
+        </p>`;
+
+      // Envoie les données à ton bot Telegram via WebApp
+      tg.sendData(JSON.stringify({
+        user_id: 8036895177,
+        signal: "Achat",
+        symbol: symbol,
+        name: name,
+        time: new Date().toLocaleString()
+      }));
     }
 
     backBtn.onclick = () => {
@@ -98,5 +163,6 @@
       assetListDiv.style.display = "block";
       backBtn.style.display = "none";
     };
-  </script></body>
+  </script>
+</body>
 </html>
