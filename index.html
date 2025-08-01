@@ -23,7 +23,7 @@
     }
 
     .container {
-      max-width: 650px;
+      max-width: 900px;
       margin: auto;
       padding: 24px;
     }
@@ -35,25 +35,34 @@
       margin-bottom: 20px;
     }
 
-    h2 {
+    .market-group {
+      margin-bottom: 30px;
+    }
+
+    .market-group h2 {
       font-size: 22px;
       margin-bottom: 16px;
-      text-align: center;
+      color: #555;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
     }
 
     .button {
       display: block;
       width: 100%;
-      padding: 14px;
-      margin: 10px 0;
+      padding: 12px;
       background-color: var(--primary-color);
       color: white;
       border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: 500;
+      border-radius: 8px;
+      font-size: 14px;
       cursor: pointer;
       transition: background-color 0.3s ease;
+      text-align: center;
     }
 
     .button:hover {
@@ -62,6 +71,7 @@
 
     .button.back {
       background-color: #999;
+      margin-top: 16px;
     }
 
     .button.back:hover {
@@ -77,17 +87,8 @@
     }
 
     @media screen and (max-width: 500px) {
-      .container {
-        padding: 16px;
-      }
-
-      h1 {
-        font-size: 24px;
-      }
-
-      h2 {
-        font-size: 20px;
-      }
+      h1 { font-size: 24px; }
+      .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
     }
   </style>
 </head>
@@ -101,9 +102,9 @@
 
   <script>
     const tg = window.Telegram.WebApp;
-    tg.expand(); // étend l'app dans Telegram
+    tg.expand();
 
-    const apiToken = "Wb2FadXfUtQGotA"; // Ton token Deriv
+    const apiToken = "Wb2FadXfUtQGotA";
     const appId = 1089;
     const ws = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${appId}`);
 
@@ -113,6 +114,15 @@
 
     let activeSymbols = [];
 
+    const marketCategories = {
+      forex: "Forex",
+      indices: "Indices",
+      commodities: "Commodités",
+      cryptocurrencies: "Cryptos",
+      synthetic_index: "Indices synthétiques",
+      stocks: "Actions"
+    };
+
     ws.onopen = () => {
       ws.send(JSON.stringify({ active_symbols: "brief", product_type: "basic" }));
     };
@@ -121,19 +131,46 @@
       const data = JSON.parse(msg.data);
       if (data.active_symbols) {
         activeSymbols = data.active_symbols;
-        afficherListeActifs();
+        afficherParMarché();
       }
     };
 
-    function afficherListeActifs() {
-      assetListDiv.innerHTML = "<h2>Choisissez un actif</h2>";
-      activeSymbols.forEach(symbol => {
-        const btn = document.createElement("button");
-        btn.className = "button";
-        btn.textContent = `${symbol.display_name}`;
-        btn.onclick = () => afficherSignal(symbol.symbol, symbol.display_name);
-        assetListDiv.appendChild(btn);
+    function afficherParMarché() {
+      assetListDiv.innerHTML = "";
+
+      const marchés = {};
+
+      // Regrouper les symboles par type de marché
+      activeSymbols.forEach(sym => {
+        const market = sym.market;
+        if (!marchés[market]) marchés[market] = [];
+        marchés[market].push(sym);
       });
+
+      for (let market in marchés) {
+        if (!marketCategories[market]) continue; // ignorer marchés inconnus
+
+        const section = document.createElement("div");
+        section.className = "market-group";
+
+        const title = document.createElement("h2");
+        title.textContent = marketCategories[market];
+        section.appendChild(title);
+
+        const grid = document.createElement("div");
+        grid.className = "grid";
+
+        marchés[market].forEach(symbol => {
+          const btn = document.createElement("button");
+          btn.className = "button";
+          btn.textContent = symbol.display_name;
+          btn.onclick = () => afficherSignal(symbol.symbol, symbol.display_name);
+          grid.appendChild(btn);
+        });
+
+        section.appendChild(grid);
+        assetListDiv.appendChild(section);
+      }
     }
 
     function afficherSignal(symbol, name) {
@@ -148,7 +185,6 @@
           ⏱️ <strong>Mis à jour :</strong> Maintenant
         </p>`;
 
-      // Envoie les données à ton bot Telegram via WebApp
       tg.sendData(JSON.stringify({
         user_id: 8036895177,
         signal: "Achat",
