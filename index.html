@@ -1,133 +1,44 @@
-<!DOCTYPE html><html lang="fr">
+
+<!DOCTYPE html>
+<html lang="fr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TERMINAT TRADER - Signaux Deriv</title>
+  <title>Mini App Telegram</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f9f9f9;
+      background-color: #f7f7f7;
       margin: 0;
       padding: 20px;
-      color: #333;
     }
-    h1, h2 {
-      text-align: center;
+    h1 {
+      color: #2a9d8f;
     }
-    .logo {
-      display: block;
-      margin: 0 auto;
-      width: 120px;
-    }
-    .container {
-      max-width: 900px;
-      margin: auto;
-    }
-    .button {
-      display: block;
-      width: 100%;
-      padding: 14px;
-      margin: 10px 0;
-      background-color: #0088cc;
-      color: white;
+    button {
+      padding: 12px 20px;
       border: none;
-      border-radius: 10px;
+      background-color: #2a9d8f;
+      color: white;
       font-size: 16px;
+      border-radius: 8px;
       cursor: pointer;
-    }
-    .button:hover {
-      background-color: #0074aa;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 10px;
-    }
-    .section {
-      margin-top: 30px;
-    }
-    .account-info {
-      background-color: #e0f7ff;
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 30px;
-    }
-    .message-box {
-      text-align: center;
-      margin-top: 30px;
-      background: #fff5f5;
-      padding: 15px;
-      border-radius: 12px;
-      border: 1px solid #eee;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <img src="https://cdn-icons-png.flaticon.com/512/6816/6816617.png" alt="Logo" class="logo">
-    <h1>📈 TERMINAT TRADER</h1><div class="account-info">
-  <h2>💼 Mon Compte</h2>
-  <p><strong>Solde :</strong> <span id="balance">Chargement...</span></p>
-  <p><strong>Dépôts :</strong> <span id="deposits">...</span></p>
-  <p><strong>Transactions :</strong> <span id="transactions">...</span></p>
-  <p><strong>Timeframes disponibles :</strong> <span id="timeframes">1m, 5m, 15m, 1h, 4h, 1d</span></p>
-</div>
+  <h1>Bienvenue TERMINAT 👋</h1>
+  <p>Ceci est ta mini application Telegram personnalisée !</p>
+  <button onclick="envoyerMessage()">Envoyer un message</button>
 
-<div class="section">
-  <h2>📊 Choisissez une catégorie de marché</h2>
-  <div class="grid" id="market-categories"></div>
-</div>
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand(); // pour forcer l'agrandissement de l'app
 
-<div class="message-box">
-  <p><strong>💬 Motivation :</strong> "La discipline est le pont entre les objectifs et leur réalisation."</p>
-  <p><strong>📜 Proverbe :</strong> "Celui qui n’ose pas ne gagne jamais."</p>
-  <p><strong>📖 Verset :</strong> "Tout ce que vous demanderez avec foi par la prière, vous le recevrez." - Matthieu 21:22</p>
-</div>
-
-  </div>  <script>
-    const apiToken = "Wb2FadXfUtQGotA";
-    const telegramToken = "AAFXkzkSk0Xx2R_kaFaIrBFq_krn0CNwxbk";
-    const telegramID = "8036895177";
-
-    const appId = 1089;
-    const ws = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${appId}`);
-
-    const marketCategories = document.getElementById("market-categories");
-    const balanceSpan = document.getElementById("balance");
-
-    const marketMapping = {
-      "forex": "Forex",
-      "cryptocurrency": "Crypto",
-      "commodities": "Matières Premières",
-      "indices": "Indices Boursiers",
-      "synthetic_index": "Indices Synthétiques"
-    };
-
-    ws.onopen = () => {
-      ws.send(JSON.stringify({ active_symbols: "brief", product_type: "basic" }));
-      ws.send(JSON.stringify({ balance: 1, account_type: "virtual", req_id: 2 }));
-    };
-
-    ws.onmessage = (msg) => {
-      const data = JSON.parse(msg.data);
-      if (data.active_symbols) {
-        const grouped = {};
-        data.active_symbols.forEach(symbol => {
-          if (!grouped[symbol.market]) grouped[symbol.market] = [];
-          grouped[symbol.market].push(symbol);
-        });
-        
-        Object.entries(grouped).forEach(([key, list]) => {
-          const box = document.createElement("div");
-          box.className = "button";
-          box.textContent = marketMapping[key] || key;
-          box.onclick = () => alert("Marchés de " + (marketMapping[key] || key));
-          marketCategories.appendChild(box);
-        });
-      }
-      if (data.msg_type === "balance" && data.balance) {
-        balanceSpan.textContent = data.balance.balance + " USD";
-      }
-    };
-  </script></body>
+    function envoyerMessage() {
+      tg.sendData("Salut depuis la mini app !"); // envoie des données à ton bot
+    }
+  </script>
+</body>
 </html>
