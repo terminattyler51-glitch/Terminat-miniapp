@@ -1,203 +1,114 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Terminat Protect - Signaux Deriv</title>
+  <meta charset="UTF‑8">
+  <meta name="viewport" content="width=device‑width, initial‑scale=1.0">
+  <title>Terminat Protect – Signaux et Motivation</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --primary-color: #0088cc;
-      --secondary-color: #f1f1f1;
-      --text-color: #333;
-      --card-bg: #fff;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      --primary: #00b4d8;
+      --accent: #ffb703;
+      --dark-bg: #121212;
+      --card-bg: #1f1f1f;
+      --text: #e0e0e0;
+      --success: #21bf73;
+      --danger: #ef233c;
+      --shadow: 0 4px 12px rgba(0,0,0,0.7);
     }
-
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: "Segoe UI", Arial, sans-serif;
-      background-color: var(--secondary-color);
-      color: var(--text-color);
-    }
-
-    .container {
-      max-width: 900px;
-      margin: auto;
-      padding: 24px;
-    }
-
-    h1 {
-      text-align: center;
-      color: var(--primary-color);
-      font-size: 28px;
-      margin-bottom: 20px;
-    }
-
-    .market-group {
-      margin-bottom: 30px;
-    }
-
-    .market-group h2 {
-      font-size: 22px;
-      margin-bottom: 16px;
-      color: #555;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 12px;
-    }
-
-    .button {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      background-color: var(--primary-color);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      text-align: center;
-    }
-
-    .button:hover {
-      background-color: #006fa3;
-    }
-
-    .button.back {
-      background-color: #999;
-      margin-top: 16px;
-    }
-
-    .button.back:hover {
-      background-color: #777;
-    }
-
-    .signal-box {
-      background-color: var(--card-bg);
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: var(--shadow);
-      margin-top: 20px;
-    }
-
-    @media screen and (max-width: 500px) {
-      h1 { font-size: 24px; }
-      .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--dark-bg); color: var(--text); font-family: 'Segoe UI', sans-serif; }
+    .container { max-width: 960px; margin: auto; padding: 20px; }
+    h1 { text-align: center; font-size: 32px; color: var(--primary); margin-bottom: 10px; }
+    .announcement { background: var(--accent); color: #000; padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 20px; font-weight: bold; }
+    .section { margin-bottom: 24px; }
+    .section h2 { font-size: 22px; margin-bottom: 8px; color: var(--primary); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(140px,1fr)); gap: 12px; }
+    .button { background: var(--accent); border: none; padding: 12px; border-radius: 8px; color: #000; font-weight: 600; cursor: pointer; transition: background 0.3s; }
+    .button:hover { background: #e0a800; }
+    .back-btn { background: #333; margin-top: 20px; width: 100%; color: var(--text); }
+    .detail-box { background: var(--card-bg); padding: 20px; border-radius: 12px; box-shadow: var(--shadow); margin-top: 20px; }
+    iframe { width: 100%; height: 300px; border-radius: 10px; border: none; margin-bottom: 16px; }
+    .message { margin: 12px 0; font-style: italic; color: var(--text); text-align: center; }
+    @media (max-width:600px){ h1{ font-size:26px;} .grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));} }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>📈 Terminat Protect</h1>
-    <div id="asset-list"></div>
-    <div id="signal-box" class="signal-box" style="display:none;"></div>
-    <button class="button back" id="back-btn" style="display:none;">⬅️ Retour</button>
+    <div class="announcement">🚨 Nouvelles alertes : signaux Lapidaires disponibles — Trade avec sagesse et victoire !</div>
+
+    <div id="categories"></div>
+    <div id="products" style="display:none;"></div>
+    <div id="details" style="display:none;"></div>
+    <button class="button back-btn" id="back-btn" style="display:none;">⬅️ Retour</button>
   </div>
 
   <script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
-
-    const apiToken = "Wb2FadXfUtQGotA";
-    const appId = 1089;
+    const tg = window.Telegram.WebApp; tg.expand();
+    const appId = 1089, userId = 8036895177;
     const ws = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${appId}`);
+    const marketLabels = { forex:"Forex", commodities:"Marchés & Matières", indices:"Indices", stocks:"Actions", synthetic_index:"Indices synthétiques", cryptocurrencies:"Crypto‑monnaies" };
+    const categoriesDiv=document.getElementById("categories"), productsDiv=document.getElementById("products"), detailsDiv=document.getElementById("details"), backBtn=document.getElementById("back-btn");
+    let grouped={};
 
-    const assetListDiv = document.getElementById("asset-list");
-    const signalBox = document.getElementById("signal-box");
-    const backBtn = document.getElementById("back-btn");
-
-    let activeSymbols = [];
-
-    const marketCategories = {
-      forex: "Forex",
-      indices: "Indices",
-      commodities: "Commodités",
-      cryptocurrencies: "Cryptos",
-      synthetic_index: "Indices synthétiques",
-      stocks: "Actions"
-    };
-
-    ws.onopen = () => {
-      ws.send(JSON.stringify({ active_symbols: "brief", product_type: "basic" }));
-    };
-
-    ws.onmessage = (msg) => {
-      const data = JSON.parse(msg.data);
-      if (data.active_symbols) {
-        activeSymbols = data.active_symbols;
-        afficherParMarché();
-      }
-    };
-
-    function afficherParMarché() {
-      assetListDiv.innerHTML = "";
-
-      const marchés = {};
-
-      // Regrouper les symboles par type de marché
-      activeSymbols.forEach(sym => {
-        const market = sym.market;
-        if (!marchés[market]) marchés[market] = [];
-        marchés[market].push(sym);
-      });
-
-      for (let market in marchés) {
-        if (!marketCategories[market]) continue; // ignorer marchés inconnus
-
-        const section = document.createElement("div");
-        section.className = "market-group";
-
-        const title = document.createElement("h2");
-        title.textContent = marketCategories[market];
-        section.appendChild(title);
-
-        const grid = document.createElement("div");
-        grid.className = "grid";
-
-        marchés[market].forEach(symbol => {
-          const btn = document.createElement("button");
-          btn.className = "button";
-          btn.textContent = symbol.display_name;
-          btn.onclick = () => afficherSignal(symbol.symbol, symbol.display_name);
-          grid.appendChild(btn);
+    ws.onopen = ()=> ws.send(JSON.stringify({ active_symbols:"brief", product_type:"basic" }));
+    ws.onmessage = msg=>{
+      const data=JSON.parse(msg.data);
+      if(data.active_symbols){
+        data.active_symbols.forEach(sym=>{
+          if(!grouped[sym.market]) grouped[sym.market]=[];
+          grouped[sym.market].push(sym);
         });
+        afficherCategories();
+      }
+    };
 
-        section.appendChild(grid);
-        assetListDiv.appendChild(section);
+    function afficherCategories(){
+      categoriesDiv.innerHTML="";
+      for(let m in grouped){
+        const s=document.createElement("div"); s.className="section";
+        const h=document.createElement("h2"); h.textContent=marketLabels[m]||m; s.appendChild(h);
+        const grid=document.createElement("div"); grid.className="grid";
+        const btn=document.createElement("button"); btn.className="button"; btn.textContent="Voir les actifs";
+        btn.onclick=()=>afficherProduits(m);
+        grid.appendChild(btn); s.appendChild(grid); categoriesDiv.appendChild(s);
       }
     }
 
-    function afficherSignal(symbol, name) {
-      assetListDiv.style.display = "none";
-      backBtn.style.display = "block";
-      signalBox.style.display = "block";
-      signalBox.innerHTML = `
-        <h2>${name}</h2>
-        <p>
-          📊 <strong>Signal :</strong> Achat<br>
-          📍 <strong>Tendance :</strong> Stable<br>
-          ⏱️ <strong>Mis à jour :</strong> Maintenant
-        </p>`;
-
-      tg.sendData(JSON.stringify({
-        user_id: 8036895177,
-        signal: "Achat",
-        symbol: symbol,
-        name: name,
-        time: new Date().toLocaleString()
-      }));
+    function afficherProduits(marketKey){
+      categoriesDiv.style.display="none"; productsDiv.style.display="block"; backBtn.style.display="block"; detailsDiv.style.display="none";
+      const list=grouped[marketKey];
+      productsDiv.innerHTML=`<div class="section"><h2>${marketLabels[marketKey]||marketKey}</h2><div class="grid"></div></div>`;
+      const grid=productsDiv.querySelector(".grid");
+      list.forEach(prod=>{
+        const btn=document.createElement("button"); btn.className="button"; btn.textContent=prod.display_name;
+        btn.onclick=()=>afficherDetails(prod.symbol, prod.display_name);
+        grid.appendChild(btn);
+      });
     }
 
-    backBtn.onclick = () => {
-      signalBox.style.display = "none";
-      assetListDiv.style.display = "block";
-      backBtn.style.display = "none";
+    function afficherDetails(symbol,name){
+      productsDiv.style.display="none"; detailsDiv.style.display="block"; detailsDiv.innerHTML=`
+        <div class="detail-box">
+          <h2>${name}</h2>
+          <iframe src="https://s.tradingview.com/widgetembed/?symbol=DERIV:${symbol.toUpperCase()}&interval=1&theme=dark"></iframe>
+          <p>📊 <strong>Signal :</strong> Achat solide</p>
+          <p>📈 <strong>Tendance :</strong> Hausse</p>
+          <p>⚠️ <strong>Risque :</strong> Modéré</p>
+          <p>💡 <strong>Position suggérée :</strong> Achetez si niveaux de support & volume confirment.</p>
+          <div class="message">“Le travail acharné triomphe toujours.”</div>
+          <div class="message">“Que le Seigneur bénisse tes trades ! – Psaume 20:4”</div>
+        </div>`;
+      tg.sendData(JSON.stringify({ user_id:userId, action:"view", symbol, name, signal:"Achat solide", time:new Date().toLocaleString() }));
+    }
+
+    backBtn.onclick=()=>{
+      if(detailsDiv.style.display==="block"){
+        detailsDiv.style.display="none"; productsDiv.style.display="block";
+      } else {
+        productsDiv.style.display="none"; categoriesDiv.style.display="block"; backBtn.style.display="none";
+      }
     };
   </script>
 </body>
