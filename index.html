@@ -1,77 +1,102 @@
-<!DOCTYPE html>
-<html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Terminat Protect</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-      :root {
-        color-scheme: light dark;
+<!DOCTYPE html><html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terminat Protect - Signaux Deriv</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+    .button {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      background-color: #0088cc;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .button:hover {
+      background-color: #0074aa;
+    }
+    .back {
+      background-color: #bbb;
+    }
+    .signal-box {
+      background: #fff;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📈 Terminat Protect</h1>
+    <div id="asset-list"></div>
+    <div id="signal-box" class="signal-box" style="display:none;"></div>
+    <button class="button back" id="back-btn" style="display:none;">⬅️ Retour</button>
+  </div>  <script>
+    const apiToken = "Wb2FadXfUtQGotA";
+    const appId = 1089;
+    const ws = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${appId}`);
+
+    const assetListDiv = document.getElementById("asset-list");
+    const signalBox = document.getElementById("signal-box");
+    const backBtn = document.getElementById("back-btn");
+
+    let activeSymbols = [];
+
+    ws.onopen = () => {
+      ws.send(JSON.stringify({ active_symbols: "brief", product_type: "basic" }));
+    };
+
+    ws.onmessage = (msg) => {
+      const data = JSON.parse(msg.data);
+
+      if (data.active_symbols) {
+        activeSymbols = data.active_symbols;
+        showAssetList();
       }
+    };
 
-      body {
-        background-color: var(--tg-theme-bg-color, #ffffff);
-        color: var(--tg-theme-text-color, #000000);
-        font-family: "Segoe UI", sans-serif;
-        padding: 20px;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-      }
+    function showAssetList() {
+      assetListDiv.innerHTML = "<h2>Choisissez un actif</h2>";
+      activeSymbols.forEach(symbol => {
+        const btn = document.createElement("button");
+        btn.className = "button";
+        btn.textContent = `${symbol.display_name}`;
+        btn.onclick = () => showSignal(symbol.symbol, symbol.display_name);
+        assetListDiv.appendChild(btn);
+      });
+    }
 
-      header {
-        margin-bottom: 20px;
-      }
+    function showSignal(symbol, name) {
+      assetListDiv.style.display = "none";
+      backBtn.style.display = "block";
+      signalBox.style.display = "block";
+      signalBox.innerHTML = `<h2>${name}</h2><p>📊 Signal : <strong>Achat</strong><br>📍 Tendance : Stable<br>⏱️ Mis à jour maintenant</p>`;
+    }
 
-      h1 {
-        font-size: 26px;
-        margin-bottom: 10px;
-      }
-
-      p {
-        font-size: 16px;
-        opacity: 0.8;
-      }
-
-      .button {
-        background-color: #2a9d8f;
-        color: white;
-        padding: 12px 24px;
-        margin: 10px 0;
-        border: none;
-        border-radius: 12px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-        width: 90%;
-        max-width: 300px;
-      }
-
-      .button:hover {
-        background-color: #21867a;
-      }
-
-      footer {
-        margin-top: 40px;
-        font-size: 12px;
-        opacity: 0.6;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <h1>⚡ Terminat Protect</h1>
-      <p>Suivez vos signaux de trading avec élégance et contrôle.</p>
-    </header>
-
-    <button class="button">📊 Voir mes signaux</button>
-    <button class="button">⚙️ Paramètres du bot</button>
-    <button class="button" onclick="Telegram.WebApp.close()">❌ Fermer</button>
-
-    <footer>
-      © 2025 TerminatProtectBot
-    </footer>
-  </body>
+    backBtn.onclick = () => {
+      signalBox.style.display = "none";
+      assetListDiv.style.display = "block";
+      backBtn.style.display = "none";
+    };
+  </script></body>
 </html>
