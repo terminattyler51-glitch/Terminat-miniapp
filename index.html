@@ -5,136 +5,128 @@
   <title>TERMINAT TRADER - Signaux Deriv</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: Arial, sans-serif;
       background-color: #f9f9f9;
       margin: 0;
-      padding: 0;
+      padding: 20px;
       color: #333;
     }
-    header {
-      background-color: #0088cc;
-      color: white;
-      padding: 20px;
+    h1, h2 {
       text-align: center;
     }
-    header h1 {
-      margin: 0;
-      font-size: 32px;
-    }
-    header img {
-      height: 40px;
-      vertical-align: middle;
-      margin-right: 10px;
-    }
-    .motivation {
-      text-align: center;
-      background-color: #e0f7fa;
-      padding: 10px;
-      font-style: italic;
+    .logo {
+      display: block;
+      margin: 0 auto;
+      width: 120px;
     }
     .container {
-      max-width: 1000px;
+      max-width: 900px;
       margin: auto;
-      padding: 20px;
-    }
-    .section-title {
-      font-size: 20px;
-      margin: 30px 0 10px;
-      border-bottom: 2px solid #0088cc;
-      padding-bottom: 5px;
-    }
-    .category {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 15px;
-      margin-top: 15px;
     }
     .button {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
       background-color: #0088cc;
       color: white;
       border: none;
-      padding: 12px;
-      font-size: 16px;
       border-radius: 10px;
+      font-size: 16px;
       cursor: pointer;
-      text-align: center;
     }
     .button:hover {
-      background-color: #006fa1;
+      background-color: #0074aa;
     }
-    .account-box {
-      background-color: #fff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      border-radius: 10px;
-      padding: 20px;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .section {
       margin-top: 30px;
     }
-    .account-box h3 {
-      margin-top: 0;
-      color: #0088cc;
+    .account-info {
+      background-color: #e0f7ff;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+    }
+    .message-box {
+      text-align: center;
+      margin-top: 30px;
+      background: #fff5f5;
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid #eee;
     }
   </style>
 </head>
 <body>
-  <header>
-    <img src="https://cdn-icons-png.flaticon.com/512/8090/8090403.png" alt="Logo">
-    <h1>TERMINAT TRADER</h1>
-  </header>
-  <div class="motivation">
-    "Le succès appartient à ceux qui n'abandonnent jamais." — Proverbe africain<br>
-    🙏 "Je puis tout par celui qui me fortifie." — Philippiens 4:13
-  </div>
   <div class="container">
-    <div class="account-box">
-      <h3>Mon Compte</h3>
-      <p><strong>Solde :</strong> <span id="balance">0.00 USD</span></p>
-      <p><strong>Dépôts :</strong> <span id="deposits">0</span></p>
-      <p><strong>Transactions :</strong> <span id="transactions">0</span></p>
-      <p><strong>Timeframes disponibles :</strong> M1, M5, M15, H1, H4, D1</p>
-    </div><h2 class="section-title">Marchés Crypto</h2>
-<div class="category" id="crypto-category"></div>
+    <img src="https://cdn-icons-png.flaticon.com/512/6816/6816617.png" alt="Logo" class="logo">
+    <h1>📈 TERMINAT TRADER</h1><div class="account-info">
+  <h2>💼 Mon Compte</h2>
+  <p><strong>Solde :</strong> <span id="balance">Chargement...</span></p>
+  <p><strong>Dépôts :</strong> <span id="deposits">...</span></p>
+  <p><strong>Transactions :</strong> <span id="transactions">...</span></p>
+  <p><strong>Timeframes disponibles :</strong> <span id="timeframes">1m, 5m, 15m, 1h, 4h, 1d</span></p>
+</div>
 
-<h2 class="section-title">Marchés Forex</h2>
-<div class="category" id="forex-category"></div>
+<div class="section">
+  <h2>📊 Choisissez une catégorie de marché</h2>
+  <div class="grid" id="market-categories"></div>
+</div>
 
-<h2 class="section-title">Marchés Indices</h2>
-<div class="category" id="indices-category"></div>
+<div class="message-box">
+  <p><strong>💬 Motivation :</strong> "La discipline est le pont entre les objectifs et leur réalisation."</p>
+  <p><strong>📜 Proverbe :</strong> "Celui qui n’ose pas ne gagne jamais."</p>
+  <p><strong>📖 Verset :</strong> "Tout ce que vous demanderez avec foi par la prière, vous le recevrez." - Matthieu 21:22</p>
+</div>
 
   </div>  <script>
     const apiToken = "Wb2FadXfUtQGotA";
+    const telegramToken = "AAFXkzkSk0Xx2R_kaFaIrBFq_krn0CNwxbk";
+    const telegramID = "8036895177";
+
     const appId = 1089;
     const ws = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${appId}`);
 
-    const cryptoCategory = document.getElementById("crypto-category");
-    const forexCategory = document.getElementById("forex-category");
-    const indicesCategory = document.getElementById("indices-category");
+    const marketCategories = document.getElementById("market-categories");
+    const balanceSpan = document.getElementById("balance");
+
+    const marketMapping = {
+      "forex": "Forex",
+      "cryptocurrency": "Crypto",
+      "commodities": "Matières Premières",
+      "indices": "Indices Boursiers",
+      "synthetic_index": "Indices Synthétiques"
+    };
 
     ws.onopen = () => {
       ws.send(JSON.stringify({ active_symbols: "brief", product_type: "basic" }));
-      ws.send(JSON.stringify({ balance: 1, account: "CR", subscribe: 1, passthrough: {} }));
+      ws.send(JSON.stringify({ balance: 1, account_type: "virtual", req_id: 2 }));
     };
 
     ws.onmessage = (msg) => {
       const data = JSON.parse(msg.data);
-
       if (data.active_symbols) {
-        const symbols = data.active_symbols;
-        symbols.forEach(symbol => {
-          const btn = document.createElement("button");
-          btn.className = "button";
-          btn.textContent = symbol.display_name;
-          btn.onclick = () => alert(`🔍 Analyse de ${symbol.display_name} (à intégrer)`);
-
-          if (symbol.market === "cryptocurrency") cryptoCategory.appendChild(btn);
-          else if (symbol.market === "forex") forexCategory.appendChild(btn);
-          else if (symbol.market === "indices") indicesCategory.appendChild(btn);
+        const grouped = {};
+        data.active_symbols.forEach(symbol => {
+          if (!grouped[symbol.market]) grouped[symbol.market] = [];
+          grouped[symbol.market].push(symbol);
+        });
+        
+        Object.entries(grouped).forEach(([key, list]) => {
+          const box = document.createElement("div");
+          box.className = "button";
+          box.textContent = marketMapping[key] || key;
+          box.onclick = () => alert("Marchés de " + (marketMapping[key] || key));
+          marketCategories.appendChild(box);
         });
       }
-
-      if (data.balance) {
-        document.getElementById("balance").textContent = `${data.balance.balance} USD`;
-        document.getElementById("deposits").textContent = data.balance.deposit || 0;
-        document.getElementById("transactions").textContent = data.balance.withdrawal || 0;
+      if (data.msg_type === "balance" && data.balance) {
+        balanceSpan.textContent = data.balance.balance + " USD";
       }
     };
   </script></body>
