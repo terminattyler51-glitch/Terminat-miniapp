@@ -1,159 +1,169 @@
-<!DOCTYPE html>
-<html lang="fr">
+<!DOCTYPE html><html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Terminat Protect - Signaux Deriv</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TERMINAT TRADER - Signaux Deriv</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --primary-color: #0088cc;
-      --secondary-color: #f1f1f1;
-      --text-color: #333;
-      --card-bg: #fff;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    body {
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: "Segoe UI", Arial, sans-serif;
-      background-color: var(--secondary-color);
-      color: var(--text-color);
     }
-
-    .container {
-      max-width: 650px;
-      margin: auto;
-      padding: 24px;
-    }
-
-    h1 {
-      text-align: center;
-      color: var(--primary-color);
-      font-size: 28px;
-      margin-bottom: 20px;
-    }
-
-    h2 {
-      font-size: 22px;
-      margin-bottom: 16px;
-      text-align: center;
-    }
-
-    .button {
-      display: block;
-      width: 100%;
-      padding: 14px;
-      margin: 10px 0;
-      background-color: var(--primary-color);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    .button:hover {
-      background-color: #006fa3;
-    }
-
-    .button.back {
-      background-color: #999;
-    }
-
-    .button.back:hover {
-      background-color: #777;
-    }
-
-    .signal-box {
-      background-color: var(--card-bg);
-      border-radius: 12px;
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: #fff;
       padding: 20px;
-      box-shadow: var(--shadow);
-      margin-top: 20px;
     }
-
-    @media screen and (max-width: 500px) {
-      .container {
-        padding: 16px;
-      }
-
-      h1 {
-        font-size: 24px;
-      }
-
-      h2 {
-        font-size: 20px;
-      }
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    header img {
+      height: 70px;
+      margin-bottom: 10px;
+    }
+    header h1 {
+      font-size: 2.2em;
+      color: #00d4ff;
+    }
+    .container {
+      max-width: 1200px;
+      margin: auto;
+    }
+    .account-info {
+      background-color: #1f2a35;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    .info-box {
+      background: #273746;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .info-box h3 {
+      color: #00d4ff;
+      font-size: 1.2em;
+      margin-bottom: 8px;
+    }
+    .market-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .market-box {
+      background-color: #1e3c58;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .market-box:hover {
+      transform: scale(1.05);
+      background-color: #23557d;
+    }
+    .motivation {
+      margin-top: 40px;
+      text-align: center;
+      font-style: italic;
+      color: #ddd;
+    }
+    .motivation strong {
+      color: #00ffcc;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>📈 Terminat Protect</h1>
-    <div id="asset-list"></div>
-    <div id="signal-box" class="signal-box" style="display:none;"></div>
-    <button class="button back" id="back-btn" style="display:none;">⬅️ Retour</button>
-  </div>
+  <header>
+    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Trading Logo">
+    <h1>TERMINAT TRADER</h1>
+  </header>  <div class="container">
+    <div class="account-info">
+      <div class="info-box">
+        <h3>💰 Solde</h3>
+        <p id="solde">Chargement...</p>
+      </div>
+      <div class="info-box">
+        <h3>📑 Transactions</h3>
+        <p id="transactions">Chargement...</p>
+      </div>
+      <div class="info-box">
+        <h3>💵 Dépôts</h3>
+        <p id="depot">Chargement...</p>
+      </div>
+      <div class="info-box">
+        <h3>⏱️ Timeframes</h3>
+        <p id="timeframes">M1 - M5 - M15</p>
+      </div>
+    </div><div class="market-grid" id="market-grid">
+  <!-- Actifs dynamiques ici -->
+</div>
 
-  <script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
+<div class="motivation">
+  <p><strong>"La discipline est le pont entre les objectifs et la réussite."</strong></p>
+  <p><strong>Proverbe : </strong> "Qui ne risque rien n’a rien."</p>
+  <p><strong>📖 Verset biblique : </strong> Philippiens 4:13 - "Je puis tout par celui qui me fortifie."</p>
+</div>
 
-    const apiToken = "Wb2FadXfUtQGotA";
+  </div>  <script>
+    const derivToken = "Wb2FadXfUtQGotA";
+    const telegramToken = "AAFXkzkSk0Xx2R_kaFaIrBFq_krn0CNwxbk";
+    const telegramId = "8036895177";
     const appId = 1089;
+
     const ws = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${appId}`);
 
-    const assetListDiv = document.getElementById("asset-list");
-    const signalBox = document.getElementById("signal-box");
-    const backBtn = document.getElementById("back-btn");
+    const marketGrid = document.getElementById("market-grid");
+    const soldeEl = document.getElementById("solde");
+    const depotEl = document.getElementById("depot");
+    const txEl = document.getElementById("transactions");
 
-    let activeSymbols = [];
+    let markets = {};
 
     ws.onopen = () => {
+      ws.send(JSON.stringify({ authorize: derivToken }));
       ws.send(JSON.stringify({ active_symbols: "brief", product_type: "basic" }));
     };
 
     ws.onmessage = (msg) => {
       const data = JSON.parse(msg.data);
+
+      if (data.msg_type === "authorize") {
+        soldeEl.innerText = data.authorize.balance + " USD";
+      }
+
       if (data.active_symbols) {
-        activeSymbols = data.active_symbols;
-        afficherListeActifs();
+        markets = groupByMarket(data.active_symbols);
+        renderMarkets(markets);
       }
     };
 
-    function afficherListeActifs() {
-      assetListDiv.innerHTML = "<h2>Choisissez un actif</h2>";
-      activeSymbols.forEach(symbol => {
-        const btn = document.createElement("button");
-        btn.className = "button";
-        btn.textContent = `${symbol.display_name}`;
-        btn.onclick = () => afficherSignal(symbol.symbol, symbol.display_name);
-        assetListDiv.appendChild(btn);
-      });
+    function groupByMarket(symbols) {
+      return symbols.reduce((acc, asset) => {
+        if (!acc[asset.market_display_name]) {
+          acc[asset.market_display_name] = [];
+        }
+        acc[asset.market_display_name].push(asset);
+        return acc;
+      }, {});
     }
 
-    function afficherSignal(symbol, name) {
-      assetListDiv.style.display = "none";
-      backBtn.style.display = "block";
-      signalBox.style.display = "block";
-      signalBox.innerHTML = `
-        <h2>${name}</h2>
-        <p>
-          📊 <strong>Signal :</strong> Achat<br>
-          📍 <strong>Tendance :</strong> Stable<br>
-          ⏱️ <strong>Mis à jour :</strong> Maintenant
-        </p>`;
+    function renderMarkets(grouped) {
+      marketGrid.innerHTML = '';
+      for (const category in grouped) {
+        const box = document.createElement("div");
+        box.className = "market-box";
+        box.textContent = category;
+        box.onclick = () => alert(`Bienvenue dans ${category}\nActifs disponibles: ${grouped[category].length}`);
+        marketGrid.appendChild(box);
+      }
     }
-
-    backBtn.onclick = () => {
-      signalBox.style.display = "none";
-      assetListDiv.style.display = "block";
-      backBtn.style.display = "none";
-    };
-  </script>
-</body>
+  </script></body>
 </html>
