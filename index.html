@@ -1,195 +1,169 @@
-<!DOCTYPE html>
-<html lang="fr">
+<!DOCTYPE html><html lang="fr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TERMINAT TRADER - Signaux Deriv</title>
+  <title>TERMINAT TRADER</title>
   <style>
-    :root {
-      --primary-color: #0f172a;
-      --secondary-color: #1e293b;
-      --accent-color: #38bdf8;
-      --text-color: #f1f5f9;
-      --button-color: #2563eb;
-      --button-hover: #1d4ed8;
-      --card-bg: #334155;
-    }
-
     body {
+      margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: var(--primary-color);
-      color: var(--text-color);
-    }
-
-    header {
-      text-align: center;
-      padding: 20px;
-      background: var(--secondary-color);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    }
-
-    header img {
-      width: 60px;
-      height: 60px;
-      margin-bottom: 10px;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 28px;
-      color: var(--accent-color);
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 10px;
-      color: #e0f2fe;
-    }
-
-    .button {
-      display: block;
-      width: 100%;
-      padding: 14px;
-      margin: 10px 0;
-      font-size: 16px;
-      border: none;
-      border-radius: 12px;
-      background-color: var(--button-color);
-      color: white;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    .button:hover {
-      background-color: var(--button-hover);
-    }
-
-    .signal-box {
-      background-color: var(--card-bg);
-      padding: 20px;
-      margin-top: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    }
-
-    .back {
-      background-color: #64748b;
-    }
-
-    .info-box {
-      margin: 30px 0;
-      background-color: #475569;
-      padding: 16px;
-      border-radius: 10px;
-    }
-
-    .info-box p {
-      margin: 8px 0;
-    }
-
-    .motive {
-      background: #0ea5e9;
-      padding: 12px;
-      margin-top: 24px;
-      border-radius: 10px;
+      background: linear-gradient(to bottom right, #101820, #182737);
       color: #fff;
-      text-align: center;
     }
-
+    header {
+      background-color: #0b1e2d;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+      color: #ffd700;
+    }
+    header img {
+      height: 60px;
+    }
+    .container {
+      padding: 20px;
+    }
+    .timeframe-selector {
+      margin-bottom: 20px;
+      padding: 10px;
+      background-color: #223344;
+      border-radius: 8px;
+    }
+    .timeframe-selector label {
+      margin-right: 10px;
+      font-weight: bold;
+    }
+    select {
+      padding: 6px;
+      background-color: #fff;
+      color: #000;
+      border-radius: 5px;
+      border: none;
+    }
+    .section {
+      margin-bottom: 30px;
+    }
+    .section h2 {
+      color: #ffd700;
+    }
+    .market-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+    }
+    .market-box {
+      background-color: #2a3b4d;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s;
+      cursor: pointer;
+    }
+    .market-box:hover {
+      transform: scale(1.03);
+      background-color: #34485e;
+    }
     footer {
+      background-color: #0b1e2d;
+      padding: 20px;
       text-align: center;
-      padding: 16px;
-      font-size: 12px;
-      color: #cbd5e1;
+      color: #aaa;
+    }
+    .motivation {
+      margin-top: 20px;
+      font-style: italic;
+      color: #aaccff;
     }
   </style>
 </head>
 <body>
   <header>
-    <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="Logo de trading" />
     <h1>TERMINAT TRADER</h1>
+    <img src="https://cdn-icons-png.flaticon.com/512/2645/2645897.png" alt="Logo" />
   </header>
-
   <div class="container">
-    <div class="info-box">
-      <p><strong>👤 Nom :</strong> TERMINAT</p>
-      <p><strong>💰 Solde :</strong> Chargement...</p>
-      <p><strong>📊 Timeframe :</strong> 1 min • 2 min • 5 min • 1H</p>
-      <p><strong>📁 Transactions :</strong> Voir historique</p>
-      <p><strong>💳 Dépôts :</strong> En attente</p>
-    </div>
-
-    <h2>📈 Choisissez un marché</h2>
-    <div id="asset-list"></div>
-
-    <div id="signal-box" class="signal-box" style="display:none;"></div>
-    <button class="button back" id="back-btn" style="display:none;">⬅️ Retour</button>
-
-    <div class="motive">
-      <p><strong>💡 Motivation :</strong> “Les gagnants ne lâchent jamais, les lâcheurs ne gagnent jamais.”</p>
-      <p><strong>📖 Verset :</strong> “Je puis tout par celui qui me fortifie.” - Philippiens 4:13</p>
-    </div>
+    <div class="timeframe-selector">
+      <label for="timeframe">Choisir le Timeframe :</label>
+      <select id="timeframe">
+        <option value="60">1 minute</option>
+        <option value="120">2 minutes</option>
+        <option value="180">3 minutes</option>
+        <option value="300">5 minutes</option>
+        <option value="600">10 minutes</option>
+        <option value="900">15 minutes</option>
+        <option value="1800">30 minutes</option>
+        <option value="3600">1 heure</option>
+        <option value="7200">2 heures</option>
+        <option value="14400">4 heures</option>
+        <option value="86400">1 jour</option>
+      </select>
+    </div><div class="section">
+  <h2>💱 Forex</h2>
+  <div class="market-grid">
+    <div class="market-box">EUR/USD</div>
+    <div class="market-box">USD/JPY</div>
+    <div class="market-box">GBP/USD</div>
+    <div class="market-box">USD/CHF</div>
+    <div class="market-box">AUD/USD</div>
+    <div class="market-box">USD/CAD</div>
   </div>
+</div>
 
-  <footer>© 2025 TERMINAT TRADER - Powered by Deriv & Telegram API</footer>
+<div class="section">
+  <h2>₿ Crypto</h2>
+  <div class="market-grid">
+    <div class="market-box">Bitcoin</div>
+    <div class="market-box">Ethereum</div>
+    <div class="market-box">Litecoin</div>
+    <div class="market-box">Tether</div>
+    <div class="market-box">Cardano</div>
+  </div>
+</div>
 
-  <script>
-    const apiToken = "Wb2FadXfUtQGotA";
-    const appId = 1089;
+<div class="section">
+  <h2>📈 Indices</h2>
+  <div class="market-grid">
+    <div class="market-box">Wall Street 30</div>
+    <div class="market-box">US Tech 100</div>
+    <div class="market-box">Germany 40</div>
+    <div class="market-box">France 40</div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>🛢️ Matières premières</h2>
+  <div class="market-grid">
+    <div class="market-box">Gold</div>
+    <div class="market-box">Silver</div>
+    <div class="market-box">Oil</div>
+  </div>
+</div>
+
+<div class="motivation">
+  ✨ "La discipline est le pont entre les objectifs et les résultats."
+  <br />
+  🙏 <strong>Proverbe biblique</strong> : "Confie-toi en l'Éternel de tout ton cœur, et ne t'appuie pas sur ta sagesse." – <em>Proverbes 3:5</em>
+</div>
+
+  </div>
+  <footer>
+    Bot connecté à Deriv & Telegram avec vos identifiants ✅<br/>
+    Telegram ID : 8036895177 | Deriv Token : Wb2FadXfUtQGotA
+  </footer>  <script>
+    const apiToken = "Wb2FadXfUtQGotA"; // Deriv Token
     const telegramToken = "AAFXkzkSk0Xx2R_kaFaIrBFq_krn0CNwxbk";
-    const telegramId = 8036895177;
+    const telegramID = "8036895177";
 
-    const ws = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${appId}`);
-
-    const assetListDiv = document.getElementById("asset-list");
-    const signalBox = document.getElementById("signal-box");
-    const backBtn = document.getElementById("back-btn");
-
-    let activeSymbols = [];
-
-    ws.onopen = () => {
-      ws.send(JSON.stringify({ active_symbols: "brief", product_type: "basic" }));
-    };
-
-    ws.onmessage = (msg) => {
-      const data = JSON.parse(msg.data);
-      if (data.active_symbols) {
-        activeSymbols = data.active_symbols;
-        showAssetList();
-      }
-    };
-
-    function showAssetList() {
-      assetListDiv.innerHTML = "";
-      activeSymbols.forEach(symbol => {
-        const btn = document.createElement("button");
-        btn.className = "button";
-        btn.textContent = symbol.display_name;
-        btn.onclick = () => showSignal(symbol.symbol, symbol.display_name);
-        assetListDiv.appendChild(btn);
-      });
-    }
-
-    function showSignal(symbol, name) {
-      assetListDiv.style.display = "none";
-      backBtn.style.display = "block";
-      signalBox.style.display = "block";
-      signalBox.innerHTML = `<h2>${name}</h2><p>📊 Signal : <strong>Achat</strong><br>📍 Tendance : Stable<br>⏱️ Mis à jour maintenant</p>`;
-    }
-
-    backBtn.onclick = () => {
-      signalBox.style.display = "none";
-      assetListDiv.style.display = "block";
-      backBtn.style.display = "none";
-    };
-  </script>
-</body>
-</html> 
+    const timeframeSelect = document.getElementById("timeframe");
+    timeframeSelect.addEventListener("change", () => {
+      const selectedTimeframe = timeframeSelect.value;
+      alert("Timeframe sélectionné : " + selectedTimeframe + " secondes");
+      // TODO: WebSocket ou fetch avec ce timeframe pour analyse marché
+    });
+  </script></body>
+</html>
