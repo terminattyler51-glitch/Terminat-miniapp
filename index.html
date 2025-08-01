@@ -1,44 +1,101 @@
+<!DOCTYPE html><html lang="fr">  <head>  
+  <meta charset="UTF-8" />  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
+  <title>Terminat Protect - Signaux Deriv</title>  
+  <style>  
+    body {  
+      font-family: Arial, sans-serif;  
+      background-color: #f9f9f9;  
+      margin: 0;  
+      padding: 20px;  
+    }  
+    h1, h2 {  
+      text-align: center;  
+      color: #333;  
+    }  
+    .container {  
+      max-width: 600px;  
+      margin: auto;  
+    }  
+    .button {  
+      display: block;  
+      width: 100%;  
+      padding: 12px;  
+      margin: 8px 0;  
+      background-color: #0088cc;  
+      color: white;  
+      border: none;  
+      border-radius: 8px;  
+      font-size: 16px;  
+      cursor: pointer;  
+    }  
+    .button:hover {  
+      background-color: #0074aa;  
+    }  
+    .back {  
+      background-color: #bbb;  
+    }  
+    .signal-box {  
+      background: #fff;  
+      border-radius: 10px;  
+      padding: 16px;  
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);  
+      margin-top: 20px;  
+    }  
+  </style>  
+</head>  
+<body>  
+  <div class="container">  
+    <h1>📈 Terminat Protect</h1>  
+    <div id="asset-list"></div>  
+    <div id="signal-box" class="signal-box" style="display:none;"></div>  
+    <button class="button back" id="back-btn" style="display:none;">⬅️ Retour</button>  
+  </div>  <script>  
+    const apiToken = "Wb2FadXfUtQGotA";  
+    const appId = 1089;  
+    const ws = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${appId}`);  const assetListDiv = document.getElementById("asset-list");  
+const signalBox = document.getElementById("signal-box");  
+const backBtn = document.getElementById("back-btn");  
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mini App Telegram</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f7f7f7;
-      margin: 0;
-      padding: 20px;
-    }
-    h1 {
-      color: #2a9d8f;
-    }
-    button {
-      padding: 12px 20px;
-      border: none;
-      background-color: #2a9d8f;
-      color: white;
-      font-size: 16px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-  <h1>Bienvenue TERMINAT 👋</h1>
-  <p>Ceci est ta mini application Telegram personnalisée !</p>
-  <button onclick="envoyerMessage()">Envoyer un message</button>
+let activeSymbols = [];  
 
-  <script>
-    const tg = window.Telegram.WebApp;
-    tg.expand(); // pour forcer l'agrandissement de l'app
+ws.onopen = () => {  
+  ws.send(JSON.stringify({ active_symbols: "brief", product_type: "basic" }));  
+};  
 
-    function envoyerMessage() {
-      tg.sendData("Salut depuis la mini app !"); // envoie des données à ton bot
-    }
-  </script>
-</body>
-</html>
+ws.onmessage = (msg) => {  
+  const data = JSON.parse(msg.data);  
+
+  if (data.active_symbols) {  
+    activeSymbols = data.active_symbols;  
+    showAssetList();  
+  }  
+};  
+
+function showAssetList() {  
+  assetListDiv.innerHTML = "<h2>Choisissez un actif</h2>";  
+  activeSymbols.forEach(symbol => {  
+    const btn = document.createElement("button");  
+    btn.className = "button";  
+    btn.textContent = `${symbol.display_name}`;  
+    btn.onclick = () => showSignal(symbol.symbol, symbol.display_name);  
+    assetListDiv.appendChild(btn);  
+  });  
+}  
+
+function showSignal(symbol, name) {  
+  assetListDiv.style.display = "none";  
+  backBtn.style.display = "block";  
+  signalBox.style.display = "block";  
+  signalBox.innerHTML = `<h2>${name}</h2><p>📊 Signal : <strong>Achat</strong><br>📍 Tendance : Stable<br>⏱️ Mis à jour maintenant</p>`;  
+}  
+
+backBtn.onclick = () => {  
+  signalBox.style.display = "none";  
+  assetListDiv.style.display = "block";  
+  backBtn.style.display = "none";  
+};
+
+</script></body>
+
+</html>  
