@@ -1,118 +1,59 @@
-<!DOCTYPE html><html lang="fr">
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TERMINAT TRADER - Signaux Deriv</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>TERMINAT TRADER – Signaux Deriv</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: 'Montserrat', sans-serif;
-      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-      color: #fff;
-      padding: 20px;
-    }
-    header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    header img {
-      height: 70px;
-      margin-bottom: 10px;
-    }
-    header h1 {
-      font-size: 2.2em;
-      color: #00d4ff;
-    }
-    .container {
-      max-width: 1200px;
-      margin: auto;
-    }
-    .account-info {
-      background-color: #1f2a35;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 30px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-    }
-    .info-box {
-      background: #273746;
-      padding: 15px;
-      border-radius: 10px;
-      text-align: center;
-    }
-    .info-box h3 {
-      color: #00d4ff;
-      font-size: 1.2em;
-      margin-bottom: 8px;
-    }
-    .market-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-    }
-    .market-box {
-      background-color: #1e3c58;
-      padding: 20px;
-      border-radius: 15px;
-      text-align: center;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-    .market-box:hover {
-      transform: scale(1.05);
-      background-color: #23557d;
-    }
-    .motivation {
-      margin-top: 40px;
-      text-align: center;
-      font-style: italic;
-      color: #ddd;
-    }
-    .motivation strong {
-      color: #00ffcc;
-    }
+    body { font-family: Arial, sans-serif; background-color: #f9f9f9; color: #333; margin:0; padding:20px;}
+    header { text-align:center; padding:20px;}
+    header img { height:60px; }
+    header h1 { margin:10px 0; font-size:2em; color:#0088cc; }
+    .account { background:#fff; border:1px solid #ddd; border-radius:10px; padding:15px; max-width:600px; margin: auto 0 30px;}
+    .timeframe { margin:10px 0; }
+    .timeframe select { padding:8px; font-size:16px;}
+    .markets-grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap:15px; margin-bottom:30px;}
+    .market-btn { background:#0088cc;color:#fff;padding:14px;border:none;border-radius:10px;font-size:16px;cursor:pointer;transition:background .3s;}
+    .market-btn:hover { background:#0074aa; }
+    .symbol-list { display:none; margin-bottom:30px;}
+    .symbol-btn { background:#ffb703;color:#000;padding:10px;border:none;border-radius:8px;font-size:14px;cursor:pointer;margin:4px;}
+    .motivation { text-align:center; font-style:italic; margin-top:30px; }
   </style>
 </head>
 <body>
   <header>
-    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Trading Logo">
+    <img src="https://cdn-icons-png.flaticon.com/512/1884/1884899.png" alt="Logo Trading">
     <h1>TERMINAT TRADER</h1>
-  </header>  <div class="container">
-    <div class="account-info">
-      <div class="info-box">
-        <h3>💰 Solde</h3>
-        <p id="solde">Chargement...</p>
-      </div>
-      <div class="info-box">
-        <h3>📑 Transactions</h3>
-        <p id="transactions">Chargement...</p>
-      </div>
-      <div class="info-box">
-        <h3>💵 Dépôts</h3>
-        <p id="depot">Chargement...</p>
-      </div>
-      <div class="info-box">
-        <h3>⏱️ Timeframes</h3>
-        <p id="timeframes">M1 - M5 - M15</p>
-      </div>
-    </div><div class="market-grid" id="market-grid">
-  <!-- Actifs dynamiques ici -->
-</div>
+  </header>
 
-<div class="motivation">
-  <p><strong>"La discipline est le pont entre les objectifs et la réussite."</strong></p>
-  <p><strong>Proverbe : </strong> "Qui ne risque rien n’a rien."</p>
-  <p><strong>📖 Verset biblique : </strong> Philippiens 4:13 - "Je puis tout par celui qui me fortifie."</p>
-</div>
+  <div class="account">
+    <h2>💼 Mon Compte</h2>
+    <p>Solde : <strong id="balance">Chargement...</strong></p>
+    <p>Dépôts : <strong id="deposits">0</strong></p>
+    <p>Transactions : <strong id="transactions">0</strong></p>
+    <div class="timeframe">
+      Timeframe :
+      <select id="timeframeSelect">
+        <option>1 min</option><option>2 min</option><option>3 min</option><option>4 min</option><option>5 min</option><option>1 h</option>
+      </select>
+    </div>
+  </div>
 
-  </div>  <script>
+  <div class="markets-grid" id="marketsGrid">
+    <!-- Boutons marchés -->
+  </div>
+
+  <div class="symbol-list" id="symbolList">
+    <!-- Boutons symboles d’un marché -->
+  </div>
+
+  <div class="motivation">
+    <p><strong>"La discipline est le pont entre le rêve et la réussite."</strong></p>
+    <p>Proverbe : "Qui n’ose pas ne gagne jamais."</p>
+    <p>📖 Verset : Philippiens 4:13 – "Je puis tout par celui qui me fortifie."</p>
+  </div>
+
+  <script>
     const derivToken = "Wb2FadXfUtQGotA";
     const telegramToken = "AAFXkzkSk0Xx2R_kaFaIrBFq_krn0CNwxbk";
     const telegramId = "8036895177";
@@ -120,50 +61,55 @@
 
     const ws = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${appId}`);
 
-    const marketGrid = document.getElementById("market-grid");
-    const soldeEl = document.getElementById("solde");
-    const depotEl = document.getElementById("depot");
-    const txEl = document.getElementById("transactions");
+    const balanceEl = document.getElementById("balance");
+    const marketsGrid = document.getElementById("marketsGrid");
+    const symbolList = document.getElementById("symbolList");
 
-    let markets = {};
+    let grouped = {};
 
     ws.onopen = () => {
       ws.send(JSON.stringify({ authorize: derivToken }));
       ws.send(JSON.stringify({ active_symbols: "brief", product_type: "basic" }));
     };
 
-    ws.onmessage = (msg) => {
+    ws.onmessage = msg => {
       const data = JSON.parse(msg.data);
-
-      if (data.msg_type === "authorize") {
-        soldeEl.innerText = data.authorize.balance + " USD";
+      if(data.msg_type==="authorize" && data.authorize){
+        balanceEl.innerText = data.authorize.balance + " USD";
       }
-
-      if (data.active_symbols) {
-        markets = groupByMarket(data.active_symbols);
-        renderMarkets(markets);
+      if(data.active_symbols){
+        grouped = data.active_symbols.reduce((acc,sym)=>{
+          acc[sym.market_display_name] = acc[sym.market_display_name] || [];
+          acc[sym.market_display_name].push(sym);
+          return acc;
+        },{});
+        renderMarkets();
       }
     };
 
-    function groupByMarket(symbols) {
-      return symbols.reduce((acc, asset) => {
-        if (!acc[asset.market_display_name]) {
-          acc[asset.market_display_name] = [];
-        }
-        acc[asset.market_display_name].push(asset);
-        return acc;
-      }, {});
-    }
-
-    function renderMarkets(grouped) {
-      marketGrid.innerHTML = '';
-      for (const category in grouped) {
-        const box = document.createElement("div");
-        box.className = "market-box";
-        box.textContent = category;
-        box.onclick = () => alert(`Bienvenue dans ${category}\nActifs disponibles: ${grouped[category].length}`);
-        marketGrid.appendChild(box);
+    function renderMarkets(){
+      marketsGrid.innerHTML = "";
+      for(const m in grouped){
+        const btn = document.createElement("button");
+        btn.className = "market-btn";
+        btn.textContent = m;
+        btn.onclick = ()=> showSymbols(m);
+        marketsGrid.appendChild(btn);
       }
     }
-  </script></body>
+
+    function showSymbols(market){
+      symbolList.style.display = "block";
+      symbolList.innerHTML = `<h3>Actifs pour ${market}</h3>`;
+      grouped[market].forEach(sym=>{
+        const b = document.createElement("button");
+        b.className = "symbol-btn";
+        b.textContent = sym.display_name;
+        b.onclick = ()=> alert("Afficher analyse " + sym.display_name);
+        symbolList.appendChild(b);
+      });
+      window.scrollTo(0,document.body.scrollHeight);
+    }
+  </script>
+</body>
 </html>
